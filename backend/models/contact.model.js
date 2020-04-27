@@ -26,7 +26,7 @@ Contact.create = (newContact, result) => {
 
 // Get All
 Contact.getAll = result => {
-  sql.query("SELECT * FROM contact", (err, res) => {
+  sql.query("SELECT * FROM contact ORDER BY id DESC", (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(null, err);
@@ -103,17 +103,23 @@ Contact.remove = (id, result) => {
 };
 
 // Delete All
-Contact.removeAll = result => {
-  sql.query("DELETE FROM contact", (err, res) => {
-    if (err) {
-      console.log("error: ", err);
-      result(null, err);
-      return;
-    }
-
-    console.log(`deleted ${res.affectedRows} contact`);
-    result(null, res);
-  });
+Contact.removeAll = (idArray, result) => {
+  sql.query("DELETE FROM contact WHERE id IN (?)", [idArray], (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+  
+      if (res.affectedRows == 0) {
+        // not found Contact with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+  
+      console.log("deleted contact with id: ",err, res, idArray);
+      result(null, res);
+    })
 };
 
 // Check Contact Exists

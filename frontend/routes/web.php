@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => '/'], function(){
 	Route::post('/', 'ContactController@store')->name('contact.store');
 	Route::get('/', 'ContactController@index')->name('contact.index');
-	Route::get('/{id}', 'ContactController@show')->name('contact.detail');
+	Route::get('/{id}', 'ContactController@show')->name('contact.show');
 	Route::put('/{id}', 'ContactController@update')->name('contact.update');
 	Route::delete('/{id}', 'ContactController@delete')->name('contact.delete');
 	Route::delete('/', 'ContactController@drop')->name('contact.drop');

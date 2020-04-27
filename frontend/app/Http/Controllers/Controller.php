@@ -13,7 +13,7 @@ class Controller extends BaseController
 
     private static $base_url = 'http://localhost:3000/'; // BASE URL API
 
-    public static function curl_get($url)
+    public static function curl_get($url, $method)
     {
     	$curl = curl_init();
 
@@ -30,7 +30,7 @@ class Controller extends BaseController
 			CURLOPT_MAXREDIRS 		=> 10,
 			CURLOPT_TIMEOUT 		=> 30,
 			CURLOPT_HTTP_VERSION 	=> CURL_HTTP_VERSION_1_1,
-			CURLOPT_CUSTOMREQUEST 	=> "GET",
+			CURLOPT_CUSTOMREQUEST 	=> $method,
 			CURLOPT_HTTPHEADER 		=> $headers,
 		));
 
@@ -47,7 +47,7 @@ class Controller extends BaseController
 		}
     }
 
-    public static function curl_post($url, $fields = array())
+    public static function curl_post($url, $method, $fields = array())
     {
         $curl = curl_init();
 
@@ -60,11 +60,7 @@ class Controller extends BaseController
         curl_setopt_array($curl, array(
             CURLOPT_URL             => $url,
             CURLOPT_RETURNTRANSFER  => true,
-            // CURLOPT_ENCODING        => "",
-            // CURLOPT_MAXREDIRS       => 10,
-            // CURLOPT_TIMEOUT         => 30,
-            // CURLOPT_HTTP_VERSION    => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST   => "POST",
+            CURLOPT_CUSTOMREQUEST   => $method,
             CURLOPT_HTTPHEADER      => $headers,
             CURLOPT_POSTFIELDS      => json_encode($fields),
             CURLOPT_FOLLOWLOCATION  => true

@@ -4,145 +4,130 @@
 
 @section('content')
 
-<style type="text/css">
-	.full {
-		width: 100%; 
-		max-height: 100%; 
-		margin: auto !important; 
-		top: 0px !important;
-		bottom: 0px !important;
-		padding: 20px;
-	}
-</style>
-
-@if ( Session::has('flash_message') )            
-	<div class="alert {{ Session::get('flash_type') }}">
-		<script>
-			M.toast({html: '{{ Session::get('flash_message') }}', classes: 'rounded', displayLegth: 1000, timeRemaining: 2000})
-		</script>
-  		<h3></h3>
-	</div>
-@endif
-
-
 <div class="row valign-wrapper">
 	<div class="col s10"><h2>Contacts</h2></div>
-	<div class="col s2" style="margin-bottom: -10px !important">
-		<a href="#add" class="modal-trigger" style="color: black"><i class="large material-icons">person_add</i></a>
+	<div class="col s2" style="margin-bottom: -40px">
+		<div class="row">
+			<div class="col s7 right-align">
+				<a href="#add" class="modal-trigger btn-floating btn-large waves-effect waves-light pulse tooltipped" data-position="left" data-tooltip="Add new contact">
+					<i class="large material-icons">person_add</i>
+				</a>
+			</div>
+			<div class="col s5 left-align">
+				<button id="removeButton" type="submit" class="modal-trigger btn-floating btn-large waves-effect waves-light tooltipped" data-position="left" data-tooltip="Delete the selected">
+					<i class="large material-icons">delete_forever</i>
+				</button>
+			</div>
+		</div>
 	</div>
 </div>
 
-{{-- <div id="add" class="modal full"> --}}
-	{{-- @include('contacts.create') --}}
-{{-- </div> --}}
+ <nav>
+    <div class="teal  lighten-1" style="padding-left: 10px;">
+        <span class="breadcrumb">total contact</span>
+        <span class="breadcrumb">{{ count($data) }}</span>
+    </div>
+  </nav>
 
-<div class="modal-header center-align">
-   	<h4>Add Contact</h4>
-</div>
-<div class="modal-content">
-	<form class="col s12" method="post" action="{{ route('contact.store') }}">
-		@csrf
-		<div class="row">
-		    <div class="input-field col s6">
-		    	<i class="material-icons prefix">account_circle</i>
-		        <input placeholder="Name" name="name" id="name" type="text" class="validate">
-		        <label for="name">Name</label>
-
-		        @if($errors->has('name'))
-				    <span class="helper-text" data-error="wrong" data-success="right">{{ $errors->first('name') }}</span>
-				@endif
-		    </div>
-		    <div class="input-field col s6">
-		    	<i class="material-icons prefix">phone_android</i>
-		        <input placeholder="Number" name="number" id="number" type="number" class="validate">
-		        <label for="number">Number</label>
-		    </div>
-		</div>
-		
-		<div class="row">
-		  	<div class="input-field col s12">
-				<i class="material-icons prefix">home</i>
-		        <textarea placeholder="Address" name="address" id="address" type="text" class="materialize-textarea"></textarea>
-		        <label for="address">Address</label>
-		    </div>
-		</div>
-		
-		<div class="row">
-		    <div class="input-field col s6">
-		    	<i class="material-icons prefix">location_city</i>
-		        <input placeholder="Birthplace" name="birthplace" id="birthplace" type="text" class="validate">
-		        <label for="birthplace">Birthplace</label>
-		    </div>
-		    <div class="input-field col s6">
-		    	<i class="material-icons prefix">cake</i>
-			    <input placeholder="Birthday" name="birthday" id="birthday" type="text" class="validate">
-		        <label for="birthday">Birthday</label>
-		    </div>
-		</div>
-
-		<div class="row">
-		  	<div class="input-field col s12">
-				<i class="material-icons prefix">info</i>
-		        <textarea placeholder="Info" name="info" id="info" type="text" class="materialize-textarea"></textarea>
-		        <label for="info">Info</label>
-		    </div>
-		</div>
-
-		<div class="center-align">
-			<button type="submit" class="btn btn-primary">Create</button>
-			<button class="btn btn-indigo modal-close">Cancel</button>
-		</div>
-	</form>
+<div id="add" class="modal full">
+	@include('contacts.create')
 </div>
 
 <hr>
 
 <ul class="collection">
 	@foreach($data as $res)
-	<li class="collection-item">
+	<li class="collection-item modal-trigger" onclick="$('#detail-{{ $res->id }}').modal('open')">
 		<div class="row valign-wrapper">
-		    <div class="col s4 left-align" style="margin-top: 10px !important">
+		    <div class="col s5 left-align" style="margin-top: 10px !important">
 		    	<div class="row" style="margin-bottom: 0 !important;">
 		    		<div class="col s4" style="margin-top: 10px !important;"><i class="z-depth-1 large material-icons">assignment_ind</i></div>
 		    		<h3 class="col">{{ $res->name }}</h3>
 		    	</div>
 		    </div>
-		    <div class="col s4 left-align">
-		    	<ul>
-		    		<li>{{ $res->number }}</li>
-		        	<li>{{ $res->address }}</li>
-		        	<li>{{ $res->birthplace }}</li>
-		        	<li>{{ $res->birthday }}</li>
-		        	<li>{{ $res->info }}</li>
-		      	</ul>
+		    <div class="col s5 left-align">
+		    	<h5>{{ $res->number }}</h5>
 		    </div>
-		    <div class="col s4 right-align">
-		    	<a class='dropdown-trigger btn-floating btn-large waves-effect waves-light' href='#' data-target='dropdown-{{ $res->id }}'><i class="medium material-icons">more_vert</i></a>
+		    <div class="col s2 right-align">
 
-		    	<!-- Dropdown Structure -->
-				<ul id='dropdown-{{ $res->id }}' class='dropdown-content'>
-				    <li><a href="#edit-{{ $res->id }}" class="modal-trigger">Edit</a></li>
-				    <li><a href="#remove-{{ $res->id }}" class="modal-trigger">Remove</a></li>
-				</ul>
+		    	<div class="row">
+		    		<div class="col s9">
+		    			<a class='dropdown-trigger btn-floating btn-large waves-effect waves-light' href='#' data-target='dropdown-{{ $res->id }}'><i class="medium material-icons">more_vert</i></a>
+
+						<ul id='dropdown-{{ $res->id }}' class='dropdown-content'>
+						    <li><a class="modal-trigger" href="#edit-{{ $res->id }}"><i class="material-icons">edit</i>Edit</a></li>
+						    <li><a href="#remove-{{ $res->id }}" class="modal-trigger"><i class="material-icons">remove_circle</i>Remove</a></li>
+						</ul>
+
+		    		</div>
+		    		<div class="col s3" style="margin-top: 20px">
+		    			<label>
+					        <input name="id[]" value="{{ $res->id }}" type="checkbox" class="filled-in checkId" />
+					        <span style="padding: 5px; margin:0"></span>
+					    </label>
+		    		</div>
+		    	</div>
+
 		    </div>
 		 </div>
     </li>
 
-    <!-- Modal Structure -->
-	<div id="remove-{{ $res->id }}" class="modal">
-	    <div class="modal-content">
-	      <h4>Modal Header</h4>
-	      <p>A bunch of text</p>
-	    </div>
-	    <div class="modal-footer">
-	      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
-	    </div>
-	</div>
-
+    {{-- Start Modal Edit --}}
 	<div id="edit-{{ $res->id }}" class="modal full">
 		@include('contacts.edit')
 	</div>
+    {{-- End MOdal Edit --}}
+
+    <div id="remove-{{ $res->id }}" class="modal confirm transparent">
+	    <div class="modal-content">
+	      	
+	      	<h4 class="center-align red-text">Remove This ?</h4>
+
+			<form class="center-align" method="post" action="{{ route('contact.delete', $res->id) }}">
+				@csrf
+                @method('DELETE')
+				<a href="#" type="button" class="btn waves-effect waves-light modal-close">
+					<i class="material-icons left">keyboard_return</i>Cancel
+				</a>
+				
+				<button type="submit" class="btn waves-effect waves-light">Remove
+					<i class="material-icons right">delete</i>
+				</button>
+			</form>
+
+	    </div>
+	</div>
+
+	<div id="detail-{{ $res->id }}" class="modal">
+	    @include('contacts.detail')
+	</div>
+
 	@endforeach
 </ul>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#removeButton").click(function(e) {
+		    e.preventDefault();
+		    var url = "/";
+
+		    var myCheckboxes = new Array();
+	        $(".checkId:checked").each(function() {
+	           myCheckboxes.push($(this).val());
+	        });
+
+		    $.ajax({
+		        url: url,
+		        type: "DELETE",
+		        data: {
+		        	"_token": "{{ csrf_token() }}",
+		        	id:myCheckboxes
+		        }
+		    }).always(function() {
+		    	location.reload();
+			});
+		});
+	});
+</script>
 
 @endsection

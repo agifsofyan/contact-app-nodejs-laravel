@@ -42,7 +42,7 @@ exports.create = (req, res) => {
 	    });
 	}
 
-	if (! req.body.birthday.match(dateValidation)) {
+	if (body.birthday && ! req.body.birthday.match(dateValidation)) {
 	    res.status(validationFailCode).send({
 			code 	: validationFailCode,
 	    	message	: "Birthday not valid!, ex: 1995/01/31"
@@ -180,7 +180,7 @@ exports.update = (req, res) => {
 		      		} else {
 		      			res.status(insertCode).send({
 				    		code 	: insertCode,
-				    		message	: insertMsg,
+				    		message	: 'Update Success',
 				    		data 	: data
 				    	});
 		      		}
@@ -192,6 +192,7 @@ exports.update = (req, res) => {
 
 // Delete a Contact with the specified contactId in the request
 exports.delete = (req, res) => {
+	// console.log('eq.params.contactId', req.params.contactId);
 	Contact.remove(req.params.contactId, (err, data) => {
     	if (err) {
       		if (err.kind === "not_found") {
@@ -216,15 +217,25 @@ exports.delete = (req, res) => {
 
 // Delete all Contacts from the database.
 exports.deleteAll = (req, res) => {
-	Contact.removeAll((err, data) => {
+	contactId = req.body;
+
+	items = [];
+
+	for (var i = 0; i < contactId.length; i++) {
+		items = contactId
+	}
+
+	// console.log(items);
+
+	Contact.removeAll(items, (err, data) => {
     	if (err){
     		res.status(serverErrorCode).send({
-    			message: err.message || "Some error occurred while removing all contacts."
+    			message: err.message || "Some error occurred while removing selected contacts."
     		});
 	    }else {
 	    	res.status(successCode).send({
 	    		code 	: successCode,
-	    		message	: `All Contacts was deleted successfully!!`
+	    		message	: `Selected Contacts was deleted successfully!!`
 	    	});
     	}
     });
